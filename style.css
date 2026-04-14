@@ -1,0 +1,76 @@
+/* 🌑 Fondo general */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0a0f1c; /* azul muy oscuro casi negro */
+  color: #e2e8f0; /* gris claro para texto */
+}
+
+/* 🔝 Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+
+  background: #0f172a; /* un poco más claro que el fondo */
+  border-bottom: 1px solid #1e293b;
+}
+
+/* 🧠 Título */
+h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+/* 🔘 Botón */
+button {
+  padding: 10px 16px;
+  background: #2563eb; /* azul bonito */
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* ✨ efecto hover */
+button:hover {
+  background: #1d4ed8;
+}
+
+/* 📦 Contenedor de proyectos */
+#projectsContainer {
+  padding: 20px;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+
+/* Tarjetas */
+
+
+.project-card {
+    background-color: #1e293b; /* azul oscuro */
+    color: white;
+
+    padding: 15px;
+    margin: 10px;
+
+    border-radius: 10px;
+
+    border: 1px solid #334155;
+
+    cursor: pointer;
+
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+/* efecto hover */
+.project-card:hover {
+    background-color: #334155;
+    transform: scale(1.02);
+}
+

@@ -66,6 +66,14 @@ button:hover {
     cursor: pointer;
 
     transition: transform 0.2s, background-color 0.2s;
+
+    position: relative;
+}
+
+.project-card button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
 }
 
 /* efecto hover */

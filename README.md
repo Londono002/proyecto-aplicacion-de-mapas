@@ -1,64 +1,58 @@
-# 🧠 Aplicación de Mapas Mentales
+# 🧠 FlowMap
 
-Aplicación web en desarrollo para crear y organizar mapas mentales de forma visual. Permite gestionar múltiples proyectos y estructurar ideas mediante nodos y subnodos.
+Organizador visual de proyectos: un tablero de tarjetas y un mapa mental independiente para cada proyecto.
 
-Este proyecto hace parte de mi proceso de aprendizaje en desarrollo frontend, construido desde cero con HTML, CSS y JavaScript.
-
----
-
-## 🚀 Funcionalidades actuales
-
-- Crear proyectos dinámicamente
-- Visualización de proyectos en tarjetas
-- Interfaz básica en modo oscuro
-- Render dinámico con JavaScript
+🔗 **Demo en vivo:** [londono002.github.io/proyecto-aplicacion-de-mapas](https://londono002.github.io/proyecto-aplicacion-de-mapas/)
 
 ---
 
-## 🧪 Prototipo funcional
+## ✨ Funcionalidades
 
-La versión más reciente del proyecto está en [`prototype.html`](./prototype.html). Es un prototipo autocontenido (HTML, CSS y JavaScript en un solo archivo) que se abre con doble clic y ya incluye:
+- Tablero de proyectos con búsqueda, filtros y progreso de tareas.
+- Mapa visual por proyecto con nubes arrastrables.
+- Tipos de nube: tarea, etapa, nota, enlace, paleta e imagen.
+- Conexiones manuales múltiples y eliminación de líneas.
+- Tareas sincronizadas con el progreso del tablero.
+- Paletas editables: cambiar, añadir y borrar colores.
+- Paleta favorita marcada con ★, que se muestra en la tarjeta principal.
+- Guardado automático en `localStorage` e imágenes en `IndexedDB`.
+- Botón **Reiniciar demo** para volver a los datos de ejemplo.
 
-- Tablero de proyectos con búsqueda y filtros
-- Mapa visual por proyecto con nubes arrastrables
-- Conexiones manuales múltiples y eliminación de líneas
-- Tareas sincronizadas con el progreso del tablero
-- Paletas editables con color favorito y eliminación de colores
-- Guardado automático en `localStorage` e imágenes en `IndexedDB`
+---
 
-> Los datos se guardan en el navegador. El botón **Reiniciar demo** restaura los datos de ejemplo.
+## 🚀 Cómo usarlo
+
+Abre la [demo en vivo](https://londono002.github.io/proyecto-aplicacion-de-mapas/) o descarga el proyecto y abre `index.html` con doble clic.
+
+Los datos se guardan en el navegador. No requiere instalación, servidor ni dependencias.
 
 ---
 
 ## 🛠 Tecnologías utilizadas
 
-- HTML
-- CSS
-- JavaScript
+- HTML5
+- CSS3
+- JavaScript (vanilla)
+- `localStorage` para el estado de los proyectos
+- `IndexedDB` para las imágenes
 
 ---
 
 ## 📈 Próximos pasos
 
-- Integrar el prototipo FlowMap con la aplicación principal
-- Exportar e importar mapas en JSON
-- Mejorar la experiencia en móvil
-- Añadir más tipos de bloques y plantillas
+- Exportar e importar mapas en JSON.
+- Mejorar la experiencia en móvil.
+- Añadir más tipos de bloques y plantillas.
+- Explorar colaboración y sincronización en la nube.
 
 ---
 
 ## 🎯 Objetivo
 
-Desarrollar una aplicación completa de mapas mentales desde cero, documentando el proceso de aprendizaje y aplicando buenas prácticas de desarrollo.
-
----
-
-## 📸 Preview
-
-*(Próximamente screenshots de la aplicación)*
+Desarrollar una aplicación completa de mapas mentales desde cero, documentando el proceso de aprendizaje y aplicando buenas prácticas de desarrollo frontend.
 
 ---
 
 ## 💡 Autor
 
-Desarrollado por Alejandro Londoño
+Desarrollado por Alejandro Londoño.

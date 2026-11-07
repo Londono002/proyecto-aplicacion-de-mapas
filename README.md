@@ -28,6 +28,14 @@ Los datos se guardan en el navegador. No requiere instalación, servidor ni depe
 
 ---
 
+## 📁 Estructura del proyecto
+
+- `index.html` — estructura y contenido de la interfaz.
+- `style.css` — estilos y diseño visual.
+- `script.js` — lógica del tablero, mapas, paletas y persistencia.
+
+---
+
 ## 🛠 Tecnologías utilizadas
 
 - HTML5

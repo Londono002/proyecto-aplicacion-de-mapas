@@ -120,6 +120,15 @@
   .btn-ghost:hover { background: var(--panel-2); border-color: #3d5170; }
   .btn-sm { padding: 7px 12px; font-size: 12.5px; }
 
+  .btn-danger {
+    color: #fca5a5;
+    border-color: rgba(248, 113, 113, .38);
+  }
+  .btn-danger:hover {
+    background: rgba(248, 113, 113, .12);
+    border-color: rgba(248, 113, 113, .6);
+  }
+
   .icon-btn {
     width: 32px;
     height: 32px;
@@ -313,6 +322,54 @@
     font-size: 16px;
     font-weight: 680;
     letter-spacing: -.01em;
+  }
+
+  .card-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .card-title-row .card-title {
+    margin-bottom: 5px;
+    min-width: 0;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 4px;
+    flex: none;
+    margin-top: -2px;
+  }
+
+  .card-action {
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel-2);
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .16s, color .16s, border-color .16s, transform .16s;
+  }
+
+  .card-action:hover {
+    color: var(--text);
+    border-color: var(--border-hi);
+    background: #1b2942;
+    transform: translateY(-1px);
+  }
+
+  .card-action-danger:hover {
+    color: #fca5a5;
+    border-color: rgba(248, 113, 113, .5);
+    background: rgba(248, 113, 113, .12);
   }
 
   .card-desc {
@@ -1178,6 +1235,16 @@
     transition: .18s;
   }
   .node-image .img-box.has-image:hover label { opacity: 1; }
+
+  .detail-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 9px;
+  }
+
+  .detail-actions .btn-ghost { flex: 1; }
+
+  .form-hint { margin: 0 0 15px; }
 
   .map-cta {
     width: 100%;

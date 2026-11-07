@@ -9,6 +9,7 @@ Organizador visual de proyectos: un tablero de tarjetas y un mapa mental indepen
 ## ✨ Funcionalidades
 
 - Tablero de proyectos con búsqueda, filtros y progreso de tareas.
+- Edición y eliminación de proyectos directamente desde el tablero.
 - Mapa visual por proyecto con nubes arrastrables.
 - Tipos de nube: tarea, etapa, nota, enlace, paleta e imagen.
 - Conexiones manuales múltiples y eliminación de líneas.

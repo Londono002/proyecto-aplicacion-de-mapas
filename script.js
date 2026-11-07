@@ -326,7 +326,7 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
       const data = JSON.parse(raw);
-      if (!data || !Array.isArray(data.projects) || !data.projects.length) return null;
+      if (!data || !Array.isArray(data.projects)) return null;
       return data.projects.map(normalizeProject);
     } catch {
       return null;
@@ -466,7 +466,13 @@
           <span class="cover-initial">${esc(p.name.charAt(0).toUpperCase())}</span>
         </div>
         <div class="card-body">
-          <h2 class="card-title">${esc(p.name)}</h2>
+          <div class="card-title-row">
+            <h2 class="card-title">${esc(p.name)}</h2>
+            <div class="card-actions">
+              <button class="card-action" data-edit-card="${esc(p.id)}" title="Editar proyecto" aria-label="Editar ${esc(p.name)}">✎</button>
+              <button class="card-action card-action-danger" data-del-card="${esc(p.id)}" title="Eliminar proyecto" aria-label="Eliminar ${esc(p.name)}">✕</button>
+            </div>
+          </div>
           <p class="card-desc">${esc(p.desc)}</p>
           <div class="chips">
             <span class="chip chip-lang"><span class="lang-dot" style="background:${langColor(p.lang)}"></span>${esc(p.lang)}</span>
@@ -495,7 +501,9 @@
 
     grid.innerHTML = visible.length
       ? visible.map(cardHTML).join("")
-      : `<div class="empty">No hay proyectos que coincidan con el filtro o la búsqueda.</div>`;
+      : `<div class="empty">${state.projects.length
+        ? "No hay proyectos que coincidan con el filtro o la búsqueda."
+        : "Todavía no tienes proyectos. Crea el primero con «+ Nuevo proyecto»."}</div>`;
   }
 
   // ---------------- Drawer ----------------
@@ -532,6 +540,11 @@
         <p class="drawer-desc">${esc(p.desc)}</p>
 
         <button class="btn-primary map-cta" data-open-map="${esc(p.id)}">◈ Abrir mapa visual</button>
+
+        <div class="detail-actions">
+          <button class="btn-ghost btn-sm" data-edit-project="${esc(p.id)}">✎ Editar</button>
+          <button class="btn-ghost btn-sm btn-danger" data-delete-project="${esc(p.id)}">✕ Eliminar</button>
+        </div>
 
         <div class="section">
           <h3>Stack</h3>
@@ -585,86 +598,110 @@
     openDrawer(detailHTML(p));
   }
 
-  function createHTML() {
+  function projectFormHTML(project) {
+    const isEdit = !!project;
+    const p = project || {};
+    const statuses = [["idea", "Idea"], ["progress", "En progreso"], ["paused", "Pausado"], ["done", "Terminado"]];
+    const currentStatus = isEdit ? p.status : "progress";
+
     return `
       <div class="drawer-head form-head">
         <button class="icon-btn" data-close aria-label="Cerrar">✕</button>
-        <h2>Nuevo proyecto</h2>
-        <p>Crea un bloque con su stack, paleta y estado.</p>
+        <h2>${isEdit ? "Editar proyecto" : "Nuevo proyecto"}</h2>
+        <p>${isEdit ? "Actualiza la información que se muestra en el tablero." : "Crea un bloque con su stack, paleta y estado."}</p>
       </div>
-      <form id="createForm" class="drawer-body" autocomplete="off">
+      <form id="projectForm" class="drawer-body" autocomplete="off">
         <label class="field">
           <span>Nombre</span>
-          <input name="name" required maxlength="40" placeholder="Ej: Portfolio personal">
+          <input name="name" required maxlength="40" placeholder="Ej: Portfolio personal" value="${esc(p.name || "")}">
         </label>
 
         <label class="field">
           <span>Descripción</span>
-          <textarea name="desc" rows="2" maxlength="140" placeholder="¿De qué trata el proyecto?"></textarea>
+          <textarea name="desc" rows="${isEdit ? 4 : 2}" maxlength="140" placeholder="¿De qué trata el proyecto?">${esc(p.desc || "")}</textarea>
         </label>
 
         <div class="row2">
           <label class="field">
             <span>Lenguaje</span>
             <select name="lang">
-              ${Object.keys(LANGS).map((l) => `<option value="${l}">${l}</option>`).join("")}
+              ${Object.keys(LANGS).map((l) => `<option value="${l}"${p.lang === l ? " selected" : ""}>${l}</option>`).join("")}
             </select>
           </label>
           <label class="field">
             <span>Estado</span>
             <select name="status">
-              <option value="idea">Idea</option>
-              <option value="progress" selected>En progreso</option>
-              <option value="paused">Pausado</option>
-              <option value="done">Terminado</option>
+              ${statuses.map(([value, label]) =>
+                `<option value="${value}"${currentStatus === value ? " selected" : ""}>${label}</option>`).join("")}
             </select>
           </label>
         </div>
 
         <label class="field">
           <span>Stack (separado por comas)</span>
-          <input name="stack" placeholder="React, Vite, Tailwind">
+          <input name="stack" placeholder="React, Vite, Tailwind" value="${esc((p.stack || []).join(", "))}">
         </label>
 
-        <div class="field">
-          <span>Paleta</span>
-          <div class="palette-form">
-            ${["#0b1220", "#2563eb", "#38bdf8", "#a5f3fc", "#e2e8f0"].map((c, i) =>
-              `<input type="color" name="pal${i}" value="${c}" aria-label="Color ${i + 1}">`).join("")}
-          </div>
-          <small class="hint">La portada del bloque se genera con los colores 2 y 3.</small>
-        </div>
+        ${isEdit
+          ? `<p class="hint form-hint">La paleta y las nubes se editan desde el mapa del proyecto.</p>`
+          : `<div class="field">
+              <span>Paleta</span>
+              <div class="palette-form">
+                ${DEFAULT_PALETTE.map((c, i) =>
+                  `<input type="color" name="pal${i}" value="${esc(c)}" aria-label="Color ${i + 1}">`).join("")}
+              </div>
+              <small class="hint">La portada del bloque se genera con los colores 2 y 3.</small>
+            </div>`}
 
         <div class="form-actions">
           <button type="button" class="btn-ghost" data-close>Cancelar</button>
-          <button type="submit" class="btn-primary">Crear bloque</button>
+          <button type="submit" class="btn-primary">${isEdit ? "Guardar cambios" : "Crear bloque"}</button>
         </div>
       </form>`;
   }
 
-  function openCreate() {
-    currentProject = null;
-    openDrawer(createHTML());
+  function openProjectForm(project) {
+    const isEdit = !!project;
+    currentProject = project || null;
+    openDrawer(projectFormHTML(project));
 
-    const form = drawer.querySelector("#createForm");
+    const form = drawer.querySelector("#projectForm");
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const fd = new FormData(form);
       const name = String(fd.get("name") || "").trim();
       if (!name) return;
 
-      const palette = [0, 1, 2, 3, 4].map((i) => String(fd.get(`pal${i}`)));
+      const desc = String(fd.get("desc") || "").trim() || "Sin descripción todavía.";
+      const status = String(fd.get("status"));
+      const lang = String(fd.get("lang"));
       const stack = String(fd.get("stack") || "")
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean);
 
+      if (isEdit) {
+        project.name = name;
+        project.desc = desc;
+        project.status = status;
+        project.lang = lang;
+        project.stack = stack;
+
+        saveState();
+        renderGrid();
+        closeDrawer();
+        showToast(`Proyecto "${name}" actualizado`);
+        return;
+      }
+
+      const palette = DEFAULT_PALETTE.map((_, i) => String(fd.get(`pal${i}`)));
+
       state.projects.unshift({
         id: `p${Date.now()}`,
         name,
-        desc: String(fd.get("desc") || "").trim() || "Sin descripción todavía.",
-        status: String(fd.get("status")),
-        lang: String(fd.get("lang")),
+        desc,
+        status,
+        lang,
         stack,
         palette,
         cover: [palette[1], palette[2]],
@@ -685,6 +722,34 @@
     });
   }
 
+  async function deleteProject(id) {
+    const p = state.projects.find((x) => x.id === id);
+    if (!p) return;
+    if (!window.confirm(`¿Eliminar el proyecto "${p.name}"? Esta acción no se puede deshacer.`)) return;
+
+    const imageIds = p.nodes.filter((n) => n.imageId).map((n) => String(n.imageId));
+    imageIds.forEach((key) => {
+      imageCache.delete(key);
+      idbDelete(key).catch(() => { /* sin IndexedDB */ });
+    });
+
+    state.projects = state.projects.filter((x) => x.id !== id);
+
+    if (state.mapProjectId === id) {
+      state.mapProjectId = null;
+      stopLinking();
+      closeLineMenu();
+      document.body.classList.remove("map-mode");
+      mapView.hidden = true;
+      dashboardView.hidden = false;
+    }
+
+    saveState();
+    closeDrawer();
+    renderGrid();
+    showToast(`Proyecto "${p.name}" eliminado`);
+  }
+
   // ---------------- Eventos ----------------
   filters.addEventListener("click", (e) => {
     const btn = e.target.closest(".filter");
@@ -699,7 +764,7 @@
     renderGrid();
   });
 
-  newBtn.addEventListener("click", openCreate);
+  newBtn.addEventListener("click", () => openProjectForm(null));
   overlay.addEventListener("click", closeDrawer);
 
   resetDemo.addEventListener("click", async () => {
@@ -733,6 +798,19 @@
   });
 
   grid.addEventListener("click", (e) => {
+    const editBtn = e.target.closest("[data-edit-card]");
+    if (editBtn) {
+      e.stopPropagation();
+      const p = state.projects.find((x) => x.id === editBtn.dataset.editCard);
+      if (p) openProjectForm(p);
+      return;
+    }
+    const delBtn = e.target.closest("[data-del-card]");
+    if (delBtn) {
+      e.stopPropagation();
+      deleteProject(delBtn.dataset.delCard);
+      return;
+    }
     const mapBtn = e.target.closest("[data-open-map]");
     if (mapBtn) {
       e.stopPropagation();
@@ -751,6 +829,7 @@
 
   grid.addEventListener("keydown", (e) => {
     if (e.key !== "Enter" && e.key !== " ") return;
+    if (e.target.closest("button")) return;
     const card = e.target.closest("[data-open]");
     if (!card) return;
     e.preventDefault();
@@ -758,6 +837,17 @@
   });
 
   drawer.addEventListener("click", (e) => {
+    const editBtn = e.target.closest("[data-edit-project]");
+    if (editBtn) {
+      const p = state.projects.find((x) => x.id === editBtn.dataset.editProject);
+      if (p) openProjectForm(p);
+      return;
+    }
+    const delBtn = e.target.closest("[data-delete-project]");
+    if (delBtn) {
+      deleteProject(delBtn.dataset.deleteProject);
+      return;
+    }
     const mapBtn = e.target.closest("[data-open-map]");
     if (mapBtn) {
       openMap(mapBtn.dataset.openMap);

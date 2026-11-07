@@ -15,6 +15,21 @@ Este proyecto hace parte de mi proceso de aprendizaje en desarrollo frontend, co
 
 ---
 
+## 🧪 Prototipo funcional
+
+La versión más reciente del proyecto está en [`prototype.html`](./prototype.html). Es un prototipo autocontenido (HTML, CSS y JavaScript en un solo archivo) que se abre con doble clic y ya incluye:
+
+- Tablero de proyectos con búsqueda y filtros
+- Mapa visual por proyecto con nubes arrastrables
+- Conexiones manuales múltiples y eliminación de líneas
+- Tareas sincronizadas con el progreso del tablero
+- Paletas editables con color favorito y eliminación de colores
+- Guardado automático en `localStorage` e imágenes en `IndexedDB`
+
+> Los datos se guardan en el navegador. El botón **Reiniciar demo** restaura los datos de ejemplo.
+
+---
+
 ## 🛠 Tecnologías utilizadas
 
 - HTML
@@ -23,12 +38,12 @@ Este proyecto hace parte de mi proceso de aprendizaje en desarrollo frontend, co
 
 ---
 
-## 📈 En desarrollo
+## 📈 Próximos pasos
 
-- Guardado de proyectos (localStorage)
-- Sistema de nodos y subnodos
-- Sidebar para navegación rápida
-- Edición de mapas mentales
+- Integrar el prototipo FlowMap con la aplicación principal
+- Exportar e importar mapas en JSON
+- Mejorar la experiencia en móvil
+- Añadir más tipos de bloques y plantillas
 
 ---
 

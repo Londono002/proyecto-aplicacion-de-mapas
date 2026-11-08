@@ -1045,7 +1045,7 @@
 
   .node-actions { display: flex; align-items: center; gap: 2px; }
 
-  .node-del, .node-link-btn, .node-fav {
+  .node-del, .node-link-btn, .node-fav, .node-edit {
     width: 20px;
     height: 20px;
     display: grid;
@@ -1061,10 +1061,11 @@
     transition: .15s;
     flex: none;
   }
-  .node:hover .node-del, .node:hover .node-link-btn, .node:hover .node-fav { opacity: 1; }
+  .node:hover .node-del, .node:hover .node-link-btn, .node:hover .node-fav, .node:hover .node-edit { opacity: 1; }
   .node-del:hover { background: rgba(239, 68, 68, .16); color: #f87171; }
   .node-link-btn:hover { background: rgba(56, 189, 248, .16); color: #7dd3fc; }
   .node-fav:hover { background: rgba(251, 191, 36, .16); color: #fcd34d; }
+  .node-edit:hover { background: rgba(167, 139, 250, .16); color: #c4b5fd; }
   .node-fav.is-on { opacity: 1; color: #fbbf24; }
   .node-palette.is-favorite {
     border-left-color: #fbbf24;

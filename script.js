@@ -1018,7 +1018,10 @@
     const favBtn = n.type === "palette"
       ? `<button class="node-fav${isFav ? " is-on" : ""}" data-fav="${esc(n.id)}" title="${isFav ? "Es la paleta del tablero · clic para quitar" : "Usar esta paleta en el tablero"}" aria-label="${isFav ? "Quitar paleta favorita" : "Marcar como paleta favorita"}" aria-pressed="${isFav}">${isFav ? "★" : "☆"}</button>`
       : "";
-    const head = `<div class="node-top"><span class="node-tag">${NODE_TAG[n.type] || n.type}</span><div class="node-actions">${favBtn}<button class="node-link-btn" data-connect="${esc(n.id)}" title="Conectar esta nube con otras" aria-label="Conectar nube">↳</button><button class="node-del" data-del="${esc(n.id)}" title="Eliminar nube" aria-label="Eliminar nube">×</button></div></div>`;
+    const editBtn = ["task", "stage", "note", "link"].includes(n.type)
+      ? `<button class="node-edit" data-edit-text="${esc(n.id)}" title="Editar texto (o doble clic en la nube)" aria-label="Editar texto de la nube">✎</button>`
+      : "";
+    const head = `<div class="node-top"><span class="node-tag">${NODE_TAG[n.type] || n.type}</span><div class="node-actions">${favBtn}${editBtn}<button class="node-link-btn" data-connect="${esc(n.id)}" title="Conectar esta nube con otras" aria-label="Conectar nube">↳</button><button class="node-del" data-del="${esc(n.id)}" title="Eliminar nube" aria-label="Eliminar nube">×</button></div></div>`;
 
     if (n.type === "stage") {
       const kids = p.nodes.filter((x) => x.type === "task" && hasEdge(p, n.id, x.id));
@@ -1142,6 +1145,7 @@
   }
 
   let linkSource = null;
+  let editingText = null;
 
   function stopLinking() {
     linkSource = null;
@@ -1175,8 +1179,12 @@
   }
 
   function editText(id) {
+    const p = mapProject();
+    const node = p && nodeById(p, id);
     const el = mapSurface.querySelector(`[data-node="${CSS.escape(id)}"] [data-text]`);
-    if (!el) return;
+    if (!node || !el || el.contentEditable === "true") return;
+
+    editingText = { el, original: node.text };
     el.contentEditable = "true";
     el.focus({ preventScroll: true });
     const range = document.createRange();
@@ -1315,15 +1323,21 @@
     const target = rootEl ? p.root : p.nodes.find((n) => n.id === nodeEl.dataset.node);
     if (!target) return;
 
-    mapDrag = { el, target, px: e.clientX, py: e.clientY, ox: target.x, oy: target.y };
-    el.classList.add("dragging");
-    try { el.setPointerCapture(e.pointerId); } catch { /* puntero sintético */ }
+    mapDrag = { el, target, px: e.clientX, py: e.clientY, ox: target.x, oy: target.y, moved: false, pointerId: e.pointerId };
   });
 
   window.addEventListener("pointermove", (e) => {
     if (!mapDrag) return;
     const dx = e.clientX - mapDrag.px;
     const dy = e.clientY - mapDrag.py;
+
+    if (!mapDrag.moved) {
+      if (Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
+      mapDrag.moved = true;
+      mapDrag.el.classList.add("dragging");
+      try { mapDrag.el.setPointerCapture(mapDrag.pointerId); } catch { /* puntero sintético */ }
+    }
+
     const maxX = mapSurface.clientWidth - mapDrag.el.offsetWidth - 8;
     const maxY = mapSurface.clientHeight - mapDrag.el.offsetHeight - 8;
 
@@ -1357,17 +1371,20 @@
 
   function endDrag() {
     if (!mapDrag) return;
+    const moved = mapDrag.moved;
     mapDrag.el.classList.remove("dragging");
     mapDrag = null;
-    saveState();
+    if (moved) saveState();
   }
 
   window.addEventListener("pointerup", endDrag);
   window.addEventListener("pointercancel", endDrag);
 
   mapSurface.addEventListener("dblclick", (e) => {
-    const el = e.target.closest("[data-text]");
-    if (el) editText(el.dataset.text);
+    if (e.target.closest("button, input, label")) return;
+    const nodeEl = e.target.closest(".node[data-node]");
+    if (!nodeEl || !nodeEl.querySelector("[data-text]")) return;
+    editText(nodeEl.dataset.node);
   });
 
   mapSurface.addEventListener("input", (e) => {
@@ -1394,6 +1411,7 @@
     const el = e.target.closest("[data-text][contenteditable='true']");
     if (!el) return;
     el.contentEditable = "false";
+    editingText = null;
     const node = findNode(el.dataset.text);
     if (node) {
       const text = el.textContent.trim();
@@ -1413,12 +1431,23 @@
     } else if (e.key === "Escape") {
       e.stopPropagation();
       const node = findNode(el.dataset.text);
-      if (node) el.textContent = node.text;
+      if (node && editingText && editingText.el === el) {
+        node.text = editingText.original;
+        el.textContent = node.text;
+      }
       el.blur();
     }
   });
 
   mapSurface.addEventListener("click", (e) => {
+    const editBtn = e.target.closest("[data-edit-text]");
+    if (editBtn) {
+      e.stopPropagation();
+      closeLineMenu();
+      editText(editBtn.dataset.editText);
+      return;
+    }
+
     const edgeEl = e.target.closest("[data-edge]");
     if (edgeEl && !linkSource) {
       e.stopPropagation();
